@@ -39,6 +39,7 @@ typedef struct
 
 static const char *known_mimetypes[] = {
   "video/webm",
+  "video/mp4",
   "multipart/x-mixed-replace",
   NULL
 };
@@ -107,7 +108,7 @@ static void
 send_response_200_ok (Client * client)
 {
   gchar *response;
-  response = g_strdup_printf ("%s 200 OK\r\n%s\r\n", client->http_version,
+  response = g_strdup_printf ("%s 200 OK\r\nCache-Control: no-cache, no-store, must-revalidate\r\nAccess-Control-Allow-Origin: *\r\n%s\r\n", client->http_version,
         content_type);
   write_bytes (client, response, strlen (response));
   g_free (response);
@@ -390,6 +391,7 @@ static void on_stream_caps_changed (GObject *obj, GParamSpec *pspec,
    */
   int i = 0;
   const gchar *mimetype = gst_structure_get_name(gstrc);
+  g_print("Got mimetype: %s\n",mimetype);
   while (known_mimetypes[i] != NULL)
   {
     if (strcmp(mimetype, known_mimetypes[i]) == 0)
